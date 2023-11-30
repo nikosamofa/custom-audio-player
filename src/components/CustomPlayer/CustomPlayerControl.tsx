@@ -4,6 +4,7 @@ import styles from "./CustomPlayerControl.module.css";
 
 export const CustomPlayerControl = () => {
   const {
+    loadError,
     isMuted,
     loop,
     currentTime,
@@ -21,22 +22,36 @@ export const CustomPlayerControl = () => {
   return (
     <div className={styles.container}>
       <div className={styles.rowContainer}>
-        <button onClick={() => handleSkip(-10)}>&lt;&lt;</button>
-        <button onClick={handlePause}>||</button>
-        <button onClick={handlePlay}>|&gt;</button>
-        <button onClick={() => handleSkip(10)}>&gt;&gt;</button>
+        <button disabled={loadError} onClick={() => handleSkip(-10)}>
+          &lt;&lt;
+        </button>
+        <button disabled={loadError} onClick={handlePause}>
+          ||
+        </button>
+        <button disabled={loadError} onClick={handlePlay}>
+          |&gt;
+        </button>
+        <button disabled={loadError} onClick={() => handleSkip(10)}>
+          &gt;&gt;
+        </button>
         <input
+          disabled={loadError}
           type="range"
           min="0"
           max={Math.floor(totalTime).toString()}
           step="1"
           onChange={(e) => handleTimeUpdate(Number(e.target.value))}
         />
-        <button onClick={toggleLoop}>{loop ? "Unloop" : "Loop"}</button>
+        <button disabled={loadError} onClick={toggleLoop}>
+          {loop ? "Unloop" : "Loop"}
+        </button>
       </div>
       <div className={styles.rowContainer}>
-        <button onClick={toggleMute}>{isMuted ? "Unmute" : "Mute"}</button>
+        <button disabled={loadError} onClick={toggleMute}>
+          {isMuted ? "Unmute" : "Mute"}
+        </button>
         <input
+          disabled={loadError}
           type="range"
           name="vol"
           min="0"

@@ -15,6 +15,8 @@ interface ICustomPlayerContext {
   currentTime: number;
   volume: number;
   totalTime: number;
+  audioUrl: string;
+  loadError: boolean;
   handlePlay: () => void;
   handlePause: () => void;
   handleVolumeChange: (volume: number) => void;
@@ -23,6 +25,8 @@ interface ICustomPlayerContext {
   toggleLoop: () => void;
   handleLoadedMetadata: () => void;
   handleTimeUpdate: (time: number) => void;
+  updateAudioUrl: (url: string) => void;
+  handleError: () => void;
 }
 
 const CustomPlayerContext = createContext({} as ICustomPlayerContext);
@@ -34,9 +38,10 @@ export const CustomPlayerContextProvider = ({ children }: { children: ReactNode 
   const [loop, setLoop] = useState(false);
   const [volume, setVolume] = useState(1);
   const [totalTime, setTotalTime] = useState(0);
+  const [audioUrl, setAudioUrl] = useState("");
+  const [loadError, setLoadError] = useState(false);
 
   useEffect(() => {
-    // todo: run only once after audioRef.current is Truthy
     const timeUpdate = () => {
       if (!audioRef.current) return;
       setCurrentTime(audioRef.current.currentTime);
@@ -45,12 +50,16 @@ export const CustomPlayerContextProvider = ({ children }: { children: ReactNode 
     audioRef.current?.addEventListener?.("timeupdate", timeUpdate);
   }, []);
 
+  useEffect(() => {
+    if (!audioUrl) audioRef.current?.load?.();
+  }, [audioUrl]);
+
   const handlePlay = () => {
-    audioRef.current?.play();
+    audioRef.current?.play?.();
   };
 
   const handlePause = () => {
-    audioRef.current?.pause();
+    audioRef.current?.pause?.();
   };
 
   const handleVolumeChange = (v: number) => {
@@ -85,6 +94,18 @@ export const CustomPlayerContextProvider = ({ children }: { children: ReactNode 
     if (!audioRef.current) return;
 
     setTotalTime(audioRef.current.duration);
+    setCurrentTime(0);
+    setLoadError(false);
+  };
+
+  const updateAudioUrl = (url: string) => {
+    setAudioUrl(url);
+  };
+
+  const handleError = () => {
+    setTotalTime(0);
+    setCurrentTime(0);
+    setLoadError(true);
   };
 
   return (
@@ -96,6 +117,8 @@ export const CustomPlayerContextProvider = ({ children }: { children: ReactNode 
         currentTime,
         volume,
         totalTime,
+        audioUrl,
+        loadError,
         handlePlay,
         handlePause,
         handleVolumeChange,
@@ -104,6 +127,8 @@ export const CustomPlayerContextProvider = ({ children }: { children: ReactNode 
         handleSkip,
         handleLoadedMetadata,
         handleTimeUpdate,
+        updateAudioUrl,
+        handleError,
       }}
     >
       {children}

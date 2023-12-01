@@ -1,14 +1,15 @@
-import { useId, FormEvent, useState } from "react";
+import { useId, FormEvent } from "react";
 import { useCustomPlayerContext } from "./CustomPlayer/CustomPlayerContextProvider";
 import styles from "./AudioLinkLoader.module.css";
 
 export const AudioLinkLoader = () => {
-  const { audioRef, audioUrl, loadError, loadCount, updateAudioUrl } = useCustomPlayerContext();
+  const { audioUrl, loadError, loadCount, loading, updateAudioUrl, load } =
+    useCustomPlayerContext();
   const urlId = useId();
 
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    audioRef.current?.load?.();
+    load();
   };
 
   return (
@@ -31,7 +32,9 @@ export const AudioLinkLoader = () => {
             onChange={(e) => updateAudioUrl(e.target.value)}
           />
 
-          <button type="submit">Load</button>
+          <button type="submit" disabled={loading}>
+            {loading ? "Loading..." : "Load"}
+          </button>
         </div>
         {loadCount > 1 && loadError && (
           <p className={styles.errorText}>Please provide the valid audio link!</p>

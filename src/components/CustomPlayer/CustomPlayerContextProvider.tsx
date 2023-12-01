@@ -18,6 +18,7 @@ interface ICustomPlayerContext {
   audioUrl: string;
   loadError: boolean;
   loadCount: number;
+  loading: boolean;
   handlePlay: () => void;
   handlePause: () => void;
   handleVolumeChange: (volume: number) => void;
@@ -28,6 +29,7 @@ interface ICustomPlayerContext {
   handleTimeUpdate: (time: number) => void;
   updateAudioUrl: (url: string) => void;
   handleError: () => void;
+  load: () => void;
 }
 
 const CustomPlayerContext = createContext({} as ICustomPlayerContext);
@@ -42,6 +44,7 @@ export const CustomPlayerContextProvider = ({ children }: { children: ReactNode 
   const [audioUrl, setAudioUrl] = useState("");
   const [loadError, setLoadError] = useState(false);
   const [loadCount, setLoadCount] = useState(0);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     const timeUpdate = () => {
@@ -99,7 +102,7 @@ export const CustomPlayerContextProvider = ({ children }: { children: ReactNode 
     setCurrentTime(0);
     setLoadError(false);
     setLoadCount((prev) => prev + 1);
-    console.log("handleloadmeta");
+    setLoading(false);
   };
 
   const updateAudioUrl = (url: string) => {
@@ -111,10 +114,13 @@ export const CustomPlayerContextProvider = ({ children }: { children: ReactNode 
     setCurrentTime(0);
     setLoadError(true);
     setLoadCount((prev) => prev + 1);
-    console.log("handleError");
+    setLoading(false);
   };
 
-  console.log("loadCount", loadCount);
+  const load = () => {
+    audioRef.current?.load?.();
+    setLoading(true);
+  };
 
   return (
     <CustomPlayerContext.Provider
@@ -128,6 +134,7 @@ export const CustomPlayerContextProvider = ({ children }: { children: ReactNode 
         audioUrl,
         loadError,
         loadCount,
+        loading,
         handlePlay,
         handlePause,
         handleVolumeChange,
@@ -138,6 +145,7 @@ export const CustomPlayerContextProvider = ({ children }: { children: ReactNode 
         handleTimeUpdate,
         updateAudioUrl,
         handleError,
+        load,
       }}
     >
       {children}

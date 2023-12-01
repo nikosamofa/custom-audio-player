@@ -3,14 +3,12 @@ import { useCustomPlayerContext } from "./CustomPlayer/CustomPlayerContextProvid
 import styles from "./AudioLinkLoader.module.css";
 
 export const AudioLinkLoader = () => {
-  const { audioRef, audioUrl, loadError, updateAudioUrl } = useCustomPlayerContext();
-  const [submitted, setSubmitted] = useState(false);
+  const { audioRef, audioUrl, loadError, loadCount, updateAudioUrl } = useCustomPlayerContext();
   const urlId = useId();
 
   const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     audioRef.current?.load?.();
-    setSubmitted(true);
   };
 
   return (
@@ -35,7 +33,7 @@ export const AudioLinkLoader = () => {
 
           <button type="submit">Load</button>
         </div>
-        {submitted && loadError && (
+        {loadCount > 1 && loadError && (
           <p className={styles.errorText}>Please provide the valid audio link!</p>
         )}
       </form>

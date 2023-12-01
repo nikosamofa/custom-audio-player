@@ -17,6 +17,7 @@ interface ICustomPlayerContext {
   totalTime: number;
   audioUrl: string;
   loadError: boolean;
+  loadCount: number;
   handlePlay: () => void;
   handlePause: () => void;
   handleVolumeChange: (volume: number) => void;
@@ -40,6 +41,7 @@ export const CustomPlayerContextProvider = ({ children }: { children: ReactNode 
   const [totalTime, setTotalTime] = useState(0);
   const [audioUrl, setAudioUrl] = useState("");
   const [loadError, setLoadError] = useState(false);
+  const [loadCount, setLoadCount] = useState(0);
 
   useEffect(() => {
     const timeUpdate = () => {
@@ -96,6 +98,8 @@ export const CustomPlayerContextProvider = ({ children }: { children: ReactNode 
     setTotalTime(audioRef.current.duration);
     setCurrentTime(0);
     setLoadError(false);
+    setLoadCount((prev) => prev + 1);
+    console.log("handleloadmeta");
   };
 
   const updateAudioUrl = (url: string) => {
@@ -106,7 +110,11 @@ export const CustomPlayerContextProvider = ({ children }: { children: ReactNode 
     setTotalTime(0);
     setCurrentTime(0);
     setLoadError(true);
+    setLoadCount((prev) => prev + 1);
+    console.log("handleError");
   };
+
+  console.log("loadCount", loadCount);
 
   return (
     <CustomPlayerContext.Provider
@@ -119,6 +127,7 @@ export const CustomPlayerContextProvider = ({ children }: { children: ReactNode 
         totalTime,
         audioUrl,
         loadError,
+        loadCount,
         handlePlay,
         handlePause,
         handleVolumeChange,
